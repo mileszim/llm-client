@@ -1,0 +1,13 @@
+.DS_Store
+.idea/*
+.nyc_output
+build
+node_modules
+test
+coverage
+*.log
+yarn.lock
+*.mp3
+*.txt
+audio
+.env
