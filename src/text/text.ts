@@ -62,7 +62,7 @@ export class AIPrompt<T> {
     return functionsToJSON(this.functions ?? []);
   }
 
-  prompt(query: string, history: () => string): string {
+  async prompt(query: string, history: () => Promise<string>): Promise<string> {
     return `${query}\n${history()}\n`;
   }
 
@@ -149,12 +149,12 @@ export class AIPrompt<T> {
     query: string,
     options: Readonly<AIPromptConfig & AIServiceActionOptions>
   ): Promise<[TextResponse, string]> {
-    const h = () => mem.history(options?.sessionId);
+    const h = async () => await mem.history(options?.sessionId);
     const funcProcessor = new FunctionProcessor(ai, options);
     let previousValue;
 
     for (let i = 0; i < this.maxSteps; i++) {
-      const p = this.prompt(query, h);
+      const p = await this.prompt(query, h);
       const res = await ai.generate(p, options);
       const value = res.results.at(0)?.text?.trim() ?? '';
 
@@ -190,7 +190,7 @@ export class AIPrompt<T> {
         this.conf.stopSequences?.at(0) ?? '',
         funcExec.result,
       ];
-      mem.add(`\n${mval.join('\n')}`, options.sessionId);
+      await mem.add(`\n${mval.join('\n')}`, options.sessionId);
 
       if (foundFunc.name.localeCompare('finalResult') === 0) {
         return [res, funcExec.result ?? ''];
@@ -206,8 +206,8 @@ export class AIPrompt<T> {
     query: string,
     options: Readonly<AIPromptConfig & AIServiceActionOptions>
   ): Promise<[TextResponse, string]> {
-    const h = () => mem.history(options.sessionId);
-    const p = this.prompt(query, h);
+    const h = async () => await mem.history(options.sessionId);
+    const p = await this.prompt(query, h);
     const res = await ai.generate(p, options);
     const value = res.results.at(0)?.text?.trim() ?? '';
 
@@ -221,7 +221,7 @@ export class AIPrompt<T> {
       this.conf.responsePrefix,
       value,
     ];
-    mem.add(mval.join(''), options.sessionId);
+    await mem.add(mval.join(''), options.sessionId);
     return [res, value];
   }
 }

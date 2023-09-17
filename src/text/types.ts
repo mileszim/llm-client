@@ -27,10 +27,10 @@ export type AITextResponse<T> = {
 };
 
 export interface AIMemory {
-  add(text: string, sessionId?: string): void;
-  history(sessionId?: string): string;
-  peek(sessionId?: string): Readonly<string[]>;
-  reset(sessionId?: string): void;
+  add(text: string, sessionId?: string): Promise<void>;
+  history(sessionId?: string): Promise<string>;
+  peek(sessionId?: string): Promise<Readonly<string[]>>;
+  reset(sessionId?: string): Promise<void>;
 }
 
 export type PromptFunctionExtraOptions = {

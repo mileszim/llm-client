@@ -2,6 +2,7 @@ import { AIMemory } from './types.js';
 
 /**
  * A memory class to store ai interactions
+ * @group Memory
  * @export
  */
 export class Memory implements AIMemory {
@@ -16,21 +17,21 @@ export class Memory implements AIMemory {
     this.limit = limit;
   }
 
-  add(text: string, sessionId?: string): void {
+  async add(text: string, sessionId?: string): Promise<void> {
     const d = this.get(sessionId);
 
     d.push(text) > this.limit ? d.shift() : null;
   }
 
-  history(sessionId?: string): string {
+  async history(sessionId?: string): Promise<string> {
     return this.get(sessionId).reduce((a, v) => a + v, '');
   }
 
-  peek(sessionId?: string): Readonly<string[]> {
+  async peek(sessionId?: string): Promise<Readonly<string[]>> {
     return this.get(sessionId);
   }
 
-  reset(sessionId?: string) {
+  async reset(sessionId?: string) {
     if (!sessionId) {
       this.data = [];
     } else {
