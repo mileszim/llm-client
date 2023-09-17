@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 
-import { TextModelConfig, TextModelInfo, TokenUsage } from '../ai/types.js';
-import { uuid } from '../text/util.js';
+import { TextModelConfig, TextModelInfo, TokenUsage } from '../ai/types';
+import { uuid } from '../text/util';
 
 import {
   AITextChatPromptItem,
@@ -14,7 +14,7 @@ import {
   APIError,
   ParsingError,
   TextModelInfoWithProvider,
-} from './types.js';
+} from './types';
 
 export class ModelInfoBuilder {
   private info: TextModelInfoWithProvider = {} as TextModelInfoWithProvider;
@@ -215,10 +215,10 @@ let response = new TextResponseBuilder()
     .setEmbedModelResponseTime(456)
     .setParsingError({message: 'error', value: 'value'})
     .setApiError({
-      message: 'api error', 
-      status: 400, 
-      header: {'header1': 'value1'}, 
-      request: {'request1': 'value1'}, 
+      message: 'api error',
+      status: 400,
+      header: {'header1': 'value1'},
+      request: {'request1': 'value1'},
       body: {'body1': 'value1'}
     })
     .build();
@@ -341,15 +341,12 @@ export class AITextTraceStepBuilder {
 export const sendTrace = async (
   step: Readonly<AITextTraceStep>,
   apiKey: string,
-  devMode: boolean
+  traceEndpoint: string,
 ) => {
   const { traceId, sessionId } = step;
-  const baseUrl = devMode
-    ? 'http://localhost:3000'
-    : 'https://api.llmclient.com';
 
   await superagent
-    .post(new URL(`/api/t/traces`, baseUrl).toString())
+    .post(new URL(traceEndpoint).toString())
     .set('x-api-key', apiKey)
     .send({ traceId, sessionId, step })
     .type('json')

@@ -1,15 +1,16 @@
 import chalk from 'chalk';
 
-import { sendTrace } from '../tracing/index.js';
-import { AITextTraceStep } from '../tracing/types.js';
+import { sendTrace } from '../tracing/index';
+import { AITextTraceStep } from '../tracing/types';
+import Config from '../util/config';
 
 export class RemoteLogger {
   private apiKey?: string;
-  private devMode = false;
+  private traceEndpoint: string;
 
   constructor() {
-    this.apiKey = process.env.LLMCLIENT_APIKEY ?? process.env.LLMC_APIKEY;
-    this.devMode = process.env.DEV_MODE === 'true';
+    this.apiKey = Config.llmcApiKey;
+    this.traceEndpoint = Config.traceEndpoint;
   }
 
   setAPIKey(apiKey: string): void {
@@ -23,8 +24,7 @@ export class RemoteLogger {
     if (!this.apiKey || this.apiKey.length === 0) {
       return;
     }
-    const logTo = this.devMode ? 'localhost:3000 (dev mode)' : 'llmclient.com';
-    const msg = `🦙 Remote logging traces to ${logTo}`;
+    const msg = `🦙 Remote logging traces to ${this.traceEndpoint}`;
     console.log(chalk.yellowBright(msg));
   }
 
@@ -32,6 +32,6 @@ export class RemoteLogger {
     if (!this.apiKey || this.apiKey.length === 0) {
       return;
     }
-    await sendTrace(trace, this.apiKey, this.devMode);
+    await sendTrace(trace, this.apiKey, this.traceEndpoint);
   }
 }

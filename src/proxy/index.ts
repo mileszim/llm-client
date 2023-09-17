@@ -8,20 +8,20 @@ import zlib from 'zlib';
 import chalk from 'chalk';
 import httpProxy from 'http-proxy';
 
-import { RemoteLogger } from '../logs/remote.js';
+import { RemoteLogger } from '../logs/remote';
+import Config from '../util/config';
 
-import { Cache } from './cache.js';
+import { Cache } from './cache';
 import {
   buildTrace,
   processRequest,
   publishTrace,
   updateCachedTrace,
-} from './tracing.js';
-import { CacheItem, ExtendedIncomingMessage } from './types.js';
-import 'dotenv/config';
-import { convertToAPIError } from './util.js';
+} from './tracing';
+import { CacheItem, ExtendedIncomingMessage } from './types';
+import { convertToAPIError } from './util';
 
-const debug = (process.env.DEBUG ?? 'true') === 'true';
+const debug = Config.debug;
 
 const cache = new Cache<CacheItem>();
 
