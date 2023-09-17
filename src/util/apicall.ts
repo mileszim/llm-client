@@ -1,4 +1,7 @@
 import superagent from 'superagent';
+
+import Config from './config';
+
 /**
  * Util: API details
  * @export
@@ -19,16 +22,8 @@ export const apiCall = async <
   api: APIType,
   json: Request
 ): Promise<Response> => {
-  const useProxy =
-    process.env.LLMCLIENT_PROXY ?? process.env.LLMC_PROXY === 'true';
+  const baseUrl = Config.useProxy ? Config.proxyEndpoint : api.url;
 
-  const isDev = process.env.DEV_MODE === 'true';
-
-  const baseUrl = useProxy
-    ? isDev
-      ? 'http://127.0.0.1'
-      : 'https://proxy.llmclient.com'
-    : api.url;
   const apiPath = api.name ?? '/';
   const apiUrl = new URL(apiPath, baseUrl).toString();
 
